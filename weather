@@ -1,0 +1,21 @@
+import requests
+from bs4 import BeautifulSoup
+
+def get_weather_forecast(city):
+    url = f"https://www.gismeteo.ru/weather-{city}/"
+    response = requests.get(url)
+    
+    if response.status_code == 200:
+        soup = BeautifulSoup(response.content, 'html.parser')
+        forecast = soup.find_all('div', class_='widget__row widget__row_table widget__row_temperature')[0]
+        
+        days = forecast.find_all('div', class_='w_date')
+        temperatures = forecast.find_all('div', class_='w_temperature')
+        
+        for day, temp in zip(days, temperatures):
+            print(day.get_text(), temp.get_text())
+    else:
+        print("Failed to retrieve the weather forecast")
+
+city = "moscow"  
+get_weather_forecast(city)
